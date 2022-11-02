@@ -1,0 +1,353 @@
+\documentclass[12pt]{extarticle}
+\usepackage[a4paper, margin=2cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+\title{COMP3506 Revision Notes}
+\date{}
+
+\titleformat{\section}
+{\normalfont\Large\bfseries}{\thesection}{1em}{}[{\titlerule[0.8pt]}]
+
+\newcommand{\N}{\newline\newline}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+
+\begin{document}
+	\maketitle
+	\section{Algorithm Analysis}
+	\subsection{Asymptotic Analysis}
+	To perform an \textbf{asymptotic analysis}, we find the worst-case number of primitive operations executed as a function of the input size, $f(n)$.\N
+	We then express this function with big-O notation.
+	\subsection{Big-O Notation}
+	\textbf{Big-O notation} describes an upper bound on a function. $f(n)$ is $O(g(n))$ if $f(n)$ is asymptotically less than or equal to $g(n)$.\N
+	Formally, we say that $f(n)$ is $O(g(n))$ if $\exists c,n_{0} > 0$ such that $f(n) \leq c\cdot g(n)$, $\forall n \geq n_{0}$.
+	\subsection{Big-O Rules}
+	\begin{enumerate}
+		\item
+		If $f(n)$ is a polynomial of degree $d$, then $f(n)$ is $O(n^d)$.
+		\item
+		Use the tightest possible bound.
+		\item
+		Use the simplest expression of the class.
+	\end{enumerate}
+	\subsection{Big-$\Omega$ Notation}
+	\textbf{Big-$\Omega$ notation} describes a lower bound on a function. $f(n)$ is $\Omega(g(n))$ if $f(n)$ is asymptotically greater than or equal to $g(n)$.\N
+	Formally, we say that $f(n)$ is $\Omega(g(n))$ if $\exists c,n_{0} > 0$ such that $f(n) \geq c\cdot g(n)$, $\forall n \geq n_{0}$.
+	\subsection{Big-$\Theta$ Notation}
+	\textbf{Big-$\Theta$ notation} describes a tight bound on a function. $f(n)$ is $\Theta(g(n))$ if $f(n)$ is asymptotically equal to $g(n)$.\N
+	Formally, we say that $f(n)$ is $\Theta(g(n))$ if $\exists c_{1},c_{2},n_{0} > 0$ such that $c_{1}\cdot g(n) \leq f(n) \leq c_{2}\cdot g(n)$, $\forall n \geq n_{0}$.\N
+	\section{Recursion}
+	\subsection{Recursion Pattern}
+	\textbf{Recursion} occurs when a method calls itself.
+	\subsection{Types of Recursion}
+	\begin{enumerate}
+		\item
+		\textbf{Linear Recursion}: every possible chain of recursive calls must eventually reach a base case.
+		\item
+		\textbf{Tail Recursion}: has a recursive call as the last step. Can easily be converted into iterative form.
+		\item
+		\textbf{Binary Recursion}: there are two calls for each non-base case.
+		\item
+		\textbf{Multiple Recursion}: makes potentially many recursive calls.
+	\end{enumerate}
+	\subsection{Time Complexity of Recursive Relation}
+	\fbox{
+		\parbox{\textwidth}{
+			\bigskip
+			Find the time complexity for the following recursive relation, in big-O notation.
+			\begin{align*}
+				T = \begin{cases}
+					1,& n = 1\\
+					9\cdot T(n/3) + n^{2},& n > 1
+				\end{cases}
+			\end{align*}
+			Assume $n$ is large. Then...
+			\begin{align*}
+				T(n) &= 9T\left(\frac{n}{3}\right) + n^{2}\\
+				&= 9\left(9T\left(\frac{n}{9}\right) + \left(\frac{n}{3}\right)^{2}\right) + n^{2}\\
+				&= 9^{2}\left(9T\left(\frac{n}{27}\right) + \left(\frac{n}{9}\right)^{2}\right) + n^{2} + n^{2}\\
+				&= 9^{i}\cdot T\left(\frac{n}{3^i}\right) + in^{2}\;\;\text{for depth }i
+			\end{align*}
+			We will eventually reach $T(1)$, which occurs when $n/3^{i} = 1 \Longrightarrow i= \log_{3}{(n)}$
+			\begin{align*}
+				T(n) &= 9^{\log_{3}{n}}\cdot T(1) + n^{2}\log_{3}{(n)}\\
+				&= n^{2} + n^{2}\log_{3}{(n)}
+			\end{align*}
+			As such, we see that the time complexity is $O(n^{2}\log{(n)})$.
+		}
+	}
+	\subsection{Divide-and-Conquer Algorithm}
+	\begin{enumerate}
+		\item
+		\textbf{Divide}: if the input size is larger than a certain threshold, divide it into two or more disjoint subsets.
+		\item
+		\textbf{Conquer}: recursively solve the sub-problems associated with the subsets.
+		\item 
+		\textbf{Combine}: take the solutions to the sub-problems and merge them into a solution to the original problem.
+	\end{enumerate}
+	\bigskip
+	\section{Sorting}
+	\subsection{Insertion Sort}
+	\begin{enumerate}
+		\item
+		Compare first entry with second entry, and swap if they are not in ascending order.
+		\item
+		For third entry onwards, perform comparison with previous element. Keep swapping until the previous element is less than the current one.
+	\end{enumerate}
+	The \textbf{best-case} time complexity is $O(n)$ when all the entries are already sorted.\N
+	The \textbf{worst-case} time complexity is $O(n^2)$.\N
+	The \textbf{space complexity} is $O(1)$.\N
+	Insertion sort is both \textbf{in-place} and \textbf{stable}.
+	\subsection{Selection Sort}
+	\begin{enumerate}
+		\item
+		Start at first index and traverse list from left to right until minimum element is found. Swap with first entry.
+		\item
+		Repeat this process for the second entry onwards.
+	\end{enumerate}
+	The \textbf{best-case} time complexity is $O(n^2)$.\N
+	The \textbf{worst-case} time complexity is $O(n^2)$.\N
+	The \textbf{space complexity} is $O(1)$.\N
+	Selection sort is \textbf{in-place}.
+	\subsection{Merge-Sort}
+	\begin{enumerate}
+		\item
+		Partition the input list into two halves.
+		\item
+		Recursively sort each half.
+		\item
+		Merge the two halves.
+	\end{enumerate}
+	The \textbf{best-case} time complexity is $O(n\log{(n)})$.\N
+	The \textbf{worst-case} time complexity is $O(n\log{(n)})$.\N
+	The \textbf{space complexity} is $O(n)$.\N
+	Merge-sort is \textbf{stable}.
+	\subsection{Quick-Sort}
+	\begin{enumerate}
+		\item
+		Pick a random pivot and partition the list into elements less than pivot $L$, equal to pivot $E$, and greater than pivot $G$.
+		\item
+		Find a random pivot on each of $L$ and $G$ and repeat the same process.
+		\item
+		Ends when $L$ and $G$ contain less than two elements.
+	\end{enumerate}
+	The \textbf{average-case} time complexity is $O(n\log{(n)})$.\N
+	The \textbf{worst-case} time complexity is $O(n^{2})$.\N
+	The \textbf{space complexity} is $O(1)$.\N
+	Quick-sort is \textbf{in-place}.
+	\subsection{Bucket-Sort}
+	\begin{enumerate}
+		\item
+		Create $N$ empty buckets.
+		\item
+		Put elements from the original array into their respective bucket.
+		\item
+		Sort each non-empty bucket.
+		\item
+		Visit buckets in order and place elements back in original array.
+	\end{enumerate}
+	The \textbf{best-case} time complexity is $O(n + N)$.\N
+	The \textbf{worst-case} time complexity is $O(n^{2})$.\N
+	The \textbf{space complexity} is $O(n + N)$.\N
+	Bucket-sort is \textbf{stable} if the underlying sorting algorithm is stable.
+	\subsection{Radix-Sort}
+	\textbf{Radix-sort} is a specialisation of lexicographic sort which makes use of bucket-sort.\N
+	It is applicable to tuples where the keys in each dimension $i$ are integers in the range $[0,N-1]$.\N
+	The \textbf{worst-case} time complexity is $O(d\cdot(n+N))$.\N
+	The \textbf{space complexity} is $O(n + N)$.
+	\subsection{Stable Sort}
+	A sorting algorithm is \textbf{stable} if the relative order of any two items with the same key is preserved after execution of the algorithm.\N
+	\section{Linear Data Structures}
+	\subsection{Singly-Linked List}
+	A \textbf{singly-linked list} consists of nodes which contain an element and a pointer to the next node in the list. It has a reference to the head node, and usually a reference to the tail node.
+	\subsection{Doubly-Linked List}
+	A \textbf{doubly-linked list} is like a singly-linked list except each node also has a reference to the previous node.
+	\subsection{Linked Implementation Efficiency}
+	\begin{itemize}
+		\item Accessing head: $O(1)$
+		\item Iterating over elements: $O(n)$
+		\item Memory usage: $O(n)$		
+	\end{itemize}
+	\subsection{Array Lists}
+	An \textbf{array list} implements the list ADT, which includes methods such as checking size, and adding/removing elements.\N
+	The size of an array can be increased using two strategies.
+	\begin{enumerate}
+		\item \textbf{Incremental strategy}: increase size by a constant $c$. Runs in $O(n)$ amortised time.
+		\item \textbf{Doubling strategy}: doubles the size of the array. Runs in $O(1)$ amortised time.
+	\end{enumerate}
+	\subsection{List Implementation Efficiency}
+	\begin{itemize}
+		\item Accessing an element: $O(1)$
+		\item Add/remove operation: $O(n)$
+		\item Memory usage: $O(n)$		
+	\end{itemize}
+	\subsection{Stacks}
+	Stores objects and performs insertions/deletions on a last-in, first-out basis.\N
+	Common methods are:
+	\begin{itemize}
+		\item \textbf{pop}: removes an element from the top of the stack
+		\item \textbf{top}: returns the element at the top of the stack, without removal
+		\item \textbf{push}: adds an element to the top of the stack
+	\end{itemize}
+	A stack can be implemented using an array by adding new elements to the end and keeping track of the index.\N
+	Each operation runs in $O(1)$ time.
+	\subsection{Queues}
+	Stores objects and performs insertions/deletions on a first-in, first-out basis.\N
+	Common methods are:
+	\begin{itemize}
+		\item \textbf{enqueue}: adds an element to the back of the queue
+		\item \textbf{dequeue}: removes the element at the front of the queue 
+		\item \textbf{first}: returns the element at the front of the queue, without removal
+	\end{itemize}
+	A queue can be implemented using an array by adding new elements in a circular fashion.\N
+	If the size of the array is $N$, the number of stored elements is $s$, and the front index is $f$, then the index of the last element is:
+	\begin{equation*}
+		r = (f + s)\bmod{N}
+	\end{equation*}
+	If removing an element, then the new value of the front index becomes:
+	\begin{equation*}
+		f = (f+1)\bmod{N}
+	\end{equation*}
+	\subsection{Amortisation}
+	The \textbf{amortised time} of a push operation is the average time taken by a push operation over the series of operations.
+	\subsection{Iterators}
+	\textbf{Iterators} scan through a sequence of elements. Implements the methods \textbf{hasNext} and \textbf{next}.\N
+	The iterable interface interface has the \textbf{iterator} method.
+	\newpage
+	\section{Trees}
+	\subsection{Tree Terminology}
+	\begin{itemize}
+		\item \textbf{Root}: a node which has no parent
+		\item \textbf{Internal node}: a node which has at least one child
+		\item \textbf{External node}: a node which has no children
+		\item \textbf{Edge}: a link connecting two nodes
+		\item \textbf{Ancestor}: parent, grandparent, etc. of a node
+		\item \textbf{Descendant}: child, grandchild, etc. of a node
+		\item \textbf{Sibling}: a node with the same parents
+		\item \textbf{Degree}: the number of children a node has
+		\item \textbf{Level}: starts at 0 for the root, 1 for each child of root, 2 for each grandchild of root, etc.
+		\item \textbf{Depth}: number of edges from node to root
+		\item \textbf{Height}: number of edges from node to leaf
+		\item \textbf{Subtree}: a node and its descendants
+		\item \textbf{k-ary tree}: maximum number of child nodes is $k$
+	\end{itemize}
+	\subsection{Tree Properties}
+	If every internal node has at least two child nodes, then the number of internal nodes is at most $\ell-1$, where $\ell$ is the number of leaf nodes.
+	\subsection{Pre-Order Traversal}
+	In \textbf{pre-order traversal}, a node is visited before its descendants.
+	\begin{algorithm}
+		\caption{Pre-Order Traversal}
+		\begin{algorithmic}[1]
+			\Procedure{preOrder}{p}
+			\State $\textit{visit}(p)$
+			\For {$c\in p$}
+				\State $\textit{preOrder}(c)$
+			\EndFor
+			\EndProcedure
+		\end{algorithmic}
+	\end{algorithm}
+	\newline An example application is printing a structured document.
+	\newpage
+	\subsection{Post-Order Traversal}
+	In \textbf{post-order traversal}, a node is visited after its descendants.
+	\begin{algorithm}
+		\caption{Post-Order Traversal}
+		\begin{algorithmic}[1]
+			\Procedure{postOrder}{p}
+			\For {$c\in p$}
+				\State $\textit{postOrder}(c)$
+			\EndFor
+			\State $\textit{visit}(p)$
+			\EndProcedure
+		\end{algorithmic}
+	\end{algorithm}
+	\newline An example application is calculating the file size in a directory.
+	\subsection{In-Order Traversal}
+	In \textbf{in-order traversal}, a node is visited after its left subtree and before its right subtree.
+	\begin{algorithm}
+		\caption{In-Order Traversal}
+		\begin{algorithmic}[1]
+			\Procedure{inOrder}{p}
+			\If {$\textit{left}(p)\neq\O$}
+				\State $\textit{inOrder}($\textit{left}(p)$)$
+			\EndIf
+			\State $\textit{visit}(p)$
+			\If {$\textit{right}(p)\neq\O$}
+				\State $\textit{inOrder}($\textit{right}(p)$)$
+			\EndIf
+			\EndProcedure
+		\end{algorithmic}
+	\end{algorithm}
+	\newline An example application is printing/evaluating an arithmetic expression.
+	\subsection{Breadth-First Traversal}
+	In \textbf{breadth-first traversal}, we visit all nodes at depth $d$ before nodes at depth $d+1$.
+	\begin{algorithm}
+		\caption{Breadth-First Traversal}
+		\begin{algorithmic}[1]
+			\Procedure{breadthFirst}{p}
+			\State $Q \gets$ new empty queue
+			\State $Q.\textit{enqueue}(p)$
+			\While {$\neg Q.\textit{isEmpty}()$}
+				\State $p = Q.\textit{dequeue}$()
+				\State $\textit{visit}(p)$
+				\For{$c\in\textit{children}(p)$}
+					\State $Q.\textit{enqueue}(c)$
+				\EndFor
+			\EndWhile
+			\EndProcedure
+		\end{algorithmic}
+	\end{algorithm}
+	\newline An example application is finding all neighbouring locations in GPS navigation.
+	\subsection{Euler Tour}
+	An \textbf{Euler tour} is defined as a way of traversing a tree such that each vertex is added to the tour when we visit it. We start at the root an reach back to the root after visiting all vertices.\N
+	It requires $2N-1$ vertices to store the tour, where $N$ is the number of nodes.\N
+	It handles pre-order, post-order and in-order traversal types.
+	\subsection{Binary Trees}
+	A \textbf{binary tree} is a tree which has to most two nodes.\N
+	Some terminology for binary trees include:
+	\begin{itemize}
+		\item \textbf{Full level}: a level $\ell$ is full if it contains $2^{\ell}$ nodes
+		\item \textbf{Proper binary tree}: a binary tree where each level (excluding leaf nodes) is full.
+		\item \textbf{Complete binary tree}: a proper binary tree where all leaf nodes are as far left as possible.
+	\end{itemize}
+	\begin{flalign*}
+		\text{Let } &n \text{ be the number of nodes,}&&\\
+		&e \text{ be the number of external nodes,}&&\\
+		&i \text{ be the number of internal nodes, and}&&\\
+		&h \text{ be the height.}
+	\end{flalign*}
+	Some properties for binary trees include:
+	\begin{itemize}
+		\item $h = O(\log{(n)})$
+		\item $e = i + 1$
+		\item $n = 2e - 1$
+		\item $h \leq i$
+		\item $e \leq 2^h$
+	\end{itemize}
+	\subsection{Implementation for Binary Trees}
+	In a \textbf{linked-list implementation}, each node stores:
+	\begin{itemize}
+		\item Element
+		\item Parent node
+		\item Left-child node
+		\item Right-child node
+	\end{itemize}
+	In an \textbf{array-based implementation}, for an array $A$ each node $v$ is stored at $A[\textit{rank}(v)]$.\N
+	If node $l$ is the left child of parent node $p$, then
+	\begin{equation*}
+		\textit{rank}(l) = 2\times\textit{rank}(p) + 1
+	\end{equation*} 
+	If node $r$ is the right child of parent node $p$, then
+	\begin{equation*}
+		\textit{rank}(r) = 2\times\textit{rank}(p) + 2
+	\end{equation*}
+	\newpage
+	\section{Priority Queues}
+\end{document}
